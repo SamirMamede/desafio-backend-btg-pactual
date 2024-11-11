@@ -54,3 +54,5 @@ Exemplo da mensagem que deve ser consumida:
      - Demais itens que você julgar relevante (Framework ou técnicas de testes, metodologias, etc.) 🔍
      - Se foi utilizado o Docker, para montagem do Ambiente, publique em seu perfil do http://hub.docker.com as imagens finais 🐳
      - Cite no relatório: O seu perfil dockerHub e a(s) URL(s) onde se encontram as imagens geradas 🔗
+    
+### Este README será atualizado conforme o progresso do projeto. 🔄
