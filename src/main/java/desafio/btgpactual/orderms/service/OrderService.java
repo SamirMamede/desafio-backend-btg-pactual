@@ -6,6 +6,7 @@ import desafio.btgpactual.orderms.listener.dto.OrderCreatedEvent;
 import desafio.btgpactual.orderms.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -22,8 +23,14 @@ public class OrderService {
         var entity = new OrderEntity();
         entity.setOrderId(event.codigoPedido());
         entity.setCustomerId(event.codigoCliente());
-//      entity.setTotal();
         entity.setItems(getOrderItems(event));
+        entity.setTotal(getTotal(event));
+    }
+
+    private BigDecimal getTotal(OrderCreatedEvent event) {
+        return event.itens()
+                .stream()
+                .map(i -> i.preco().multiply(BigDecimal.valueOf(i.quantidade()))).reduce(BigDecimal::add);
     }
 
     private static List<OrderItem> getOrderItems(OrderCreatedEvent event) {
