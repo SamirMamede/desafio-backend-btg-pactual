@@ -25,12 +25,15 @@ public class OrderService {
         entity.setCustomerId(event.codigoCliente());
         entity.setItems(getOrderItems(event));
         entity.setTotal(getTotal(event));
+
+        orderRepository.save(entity);
     }
 
     private BigDecimal getTotal(OrderCreatedEvent event) {
         return event.itens()
                 .stream()
-                .map(i -> i.preco().multiply(BigDecimal.valueOf(i.quantidade()))).reduce(BigDecimal::add);
+                .map(i -> i.preco().multiply(BigDecimal.valueOf(i.quantidade())))
+                .reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
     }
 
     private static List<OrderItem> getOrderItems(OrderCreatedEvent event) {
