@@ -1,9 +1,12 @@
 package desafio.btgpactual.orderms.service;
 
+import desafio.btgpactual.orderms.controller.dto.OrderResponse;
 import desafio.btgpactual.orderms.entity.OrderEntity;
 import desafio.btgpactual.orderms.entity.OrderItem;
 import desafio.btgpactual.orderms.listener.dto.OrderCreatedEvent;
 import desafio.btgpactual.orderms.repository.OrderRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -27,6 +30,12 @@ public class OrderService {
         entity.setTotal(getTotal(event));
 
         orderRepository.save(entity);
+    }
+
+    public Page<OrderResponse> findAllByCustomerId(Long customerId, PageRequest pageRequest){
+        var orders = orderRepository.findAllByCustomerId(customerId, pageRequest);
+
+        return orders.map(OrderResponse::fromEntity);
     }
 
     private BigDecimal getTotal(OrderCreatedEvent event) {
