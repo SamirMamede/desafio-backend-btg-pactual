@@ -1,10 +1,13 @@
 package desafio.btgpactual.orderms.service;
 
+import desafio.btgpactual.orderms.entity.OrderEntity;
 import desafio.btgpactual.orderms.factory.OrderCreatedEventFactory;
 import desafio.btgpactual.orderms.repository.OrderRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -27,6 +30,9 @@ class OrderServiceTest {
     @InjectMocks
     OrderService orderService;
 
+    @Captor
+    ArgumentCaptor<OrderEntity> orderEntityCaptor;
+
     @Nested
     class Save {
 
@@ -43,6 +49,21 @@ class OrderServiceTest {
 
         @Test
         void shouldMapEventToEntityWithSuccess() {
+
+            var event = OrderCreatedEventFactory.build();
+
+            orderService.save(event);
+
+            verify(orderRepository, times(1)).save(orderEntityCaptor.capture());
+
+            var entity = orderEntityCaptor.getValue();
+
+            assertEquals(event.codigoPedido(), entity.getOrderId());
+            assertEquals(event.codigoCliente(), entity.getCustomerId());
+            assertNotNull(entity.getTotal());
+            assertEquals(event.itens().getFirst().produto(), entity.getItems().getFirst().getProduct());
+            assertEquals(event.itens().getFirst().quantidade(), entity.getItems().getFirst().getQuantity());
+            assertEquals(event.itens().getFirst().preco(), entity.getItems().getFirst().getPrice());
 
         }
 
