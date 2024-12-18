@@ -89,5 +89,23 @@ class OrderServiceTest {
 
         }
     }
+    
+    @Nested
+    class findAllByCustomerId {
+
+        @Test
+        void shouldCallRepository() {
+            //Arrange
+            //Act
+            //Assert
+        }
+
+        @Test
+        void shouldMapResponse() {
+            //Arrange
+            //Act
+            //Assert
+        }
+    }
 
 }
