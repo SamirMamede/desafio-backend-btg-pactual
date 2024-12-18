@@ -13,6 +13,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
+import java.math.BigDecimal;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -69,6 +71,21 @@ class OrderServiceTest {
 
         @Test
         void shouldCalculateOrderTotalWithSuccess() {
+
+            var event = OrderCreatedEventFactory.buildWithTwoItems();
+            var totalItem1 = event.itens().getFirst().preco().multiply(BigDecimal.valueOf(event.itens().getFirst().quantidade()));
+            var totalItem2 = event.itens().getLast().preco().multiply(BigDecimal.valueOf(event.itens().getLast().quantidade()));
+            var orderTotal = totalItem1.add(totalItem2);
+
+            orderService.save(event);
+
+            verify(orderRepository, times(1)).save(orderEntityCaptor.capture());
+
+            var entity = orderEntityCaptor.getValue();
+
+            assertNotNull(entity.getTotal());
+            assertEquals(orderTotal, entity.getTotal());
+
 
         }
     }
