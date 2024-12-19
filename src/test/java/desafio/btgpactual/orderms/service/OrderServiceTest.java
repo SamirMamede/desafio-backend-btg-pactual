@@ -111,9 +111,21 @@ class OrderServiceTest {
 
         @Test
         void shouldMapResponse() {
-            //Arrange
-            //Act
-            //Assert
+
+            var customerId = 1L;
+            var pageRequest = PageRequest.of(0, 10);
+            var page = OrderEntityFactory.buildWithPage();
+            doReturn(page).when(orderRepository).findAllByCustomerId(anyLong(), any());
+
+            var response = orderService.findAllByCustomerId(customerId, pageRequest);
+
+            assertEquals(page.getTotalPages(), response.getTotalPages());
+            assertEquals(page.getTotalElements(), response.getTotalElements());
+            assertEquals(page.getSize(), response.getSize());
+            assertEquals(page.getNumber(), response.getNumber());
+            assertEquals(page.getContent().getFirst().getOrderId(), response.getContent().getFirst().orderId());
+            assertEquals(page.getContent().getFirst().getCustomerId(), response.getContent().getFirst().customerId());
+            assertEquals(page.getContent().getFirst().getTotal(), response.getContent().getFirst().total());
         }
     }
 
