@@ -2,6 +2,7 @@ package desafio.btgpactual.orderms.service;
 
 import desafio.btgpactual.orderms.entity.OrderEntity;
 import desafio.btgpactual.orderms.factory.OrderCreatedEventFactory;
+import desafio.btgpactual.orderms.factory.OrderEntityFactory;
 import desafio.btgpactual.orderms.repository.OrderRepository;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -11,14 +12,15 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.querydsl.QPageRequest;
 
 import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
@@ -95,9 +97,16 @@ class OrderServiceTest {
 
         @Test
         void shouldCallRepository() {
-            //Arrange
-            //Act
-            //Assert
+
+            var customerId = 1L;
+            var pageRequest = PageRequest.of(0, 10);
+            doReturn(OrderEntityFactory.buildWithPage())
+                    .when(orderRepository).findAllByCustomerId(eq(customerId), eq(pageRequest));
+
+            var response = orderService.findAllByCustomerId(customerId, pageRequest);
+
+            verify(orderRepository, times(1))
+                    .findAllByCustomerId(eq(customerId), eq(pageRequest));
         }
 
         @Test
