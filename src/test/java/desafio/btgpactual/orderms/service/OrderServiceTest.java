@@ -129,4 +129,21 @@ class OrderServiceTest {
         }
     }
 
+    @Nested
+    class findTotalOnOrdersByCustomerId {
+
+        @Test
+        void shouldCallMongoTemplate() {
+        }
+
+        @Test
+        void shouldUseCorrectAggregation() {
+        }
+
+        @Test
+        void shouldQueryCorrectTable() {
+        }
+
+    }
+
 }
