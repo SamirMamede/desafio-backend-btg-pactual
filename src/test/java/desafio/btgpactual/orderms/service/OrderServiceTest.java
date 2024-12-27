@@ -181,6 +181,18 @@ class OrderServiceTest {
 
         @Test
         void shouldQueryCorrectTable() {
+
+            var customerId = 1L;
+            var totalExpected = BigDecimal.valueOf(1);
+            var aggregationResult = mock(AggregationResults.class);
+            doReturn(new Document("total", totalExpected)).when(aggregationResult).getUniqueMappedResult();
+            doReturn(aggregationResult).when(mongoTemplate)
+                    .aggregate(any(Aggregation.class), eq("tb_orders"), eq(Document.class));
+
+            orderService.findTotalOnOrdersByCustomerId(customerId);
+
+            verify(mongoTemplate, times(1))
+                    .aggregate(any(Aggregation.class), eq("tb_orders"), eq(Document.class));
         }
 
     }
