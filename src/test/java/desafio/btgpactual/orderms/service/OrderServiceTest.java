@@ -4,6 +4,7 @@ import desafio.btgpactual.orderms.entity.OrderEntity;
 import desafio.btgpactual.orderms.factory.OrderCreatedEventFactory;
 import desafio.btgpactual.orderms.factory.OrderEntityFactory;
 import desafio.btgpactual.orderms.repository.OrderRepository;
+import org.bson.Document;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,6 +15,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.querydsl.QPageRequest;
 
 import java.math.BigDecimal;
@@ -134,6 +137,20 @@ class OrderServiceTest {
 
         @Test
         void shouldCallMongoTemplate() {
+
+            var customerId = 1L;
+            var totalExpected = BigDecimal.valueOf(1);
+            var aggregationResult = mock(AggregationResults.class);
+            doReturn(new Document("total", 1)).when(aggregationResult).getUniqueMappedResult();
+            doReturn(aggregationResult).when(mongoTemplate)
+                    .aggregate(any(Aggregation.class), anyString(), eq(Document.class));
+
+            var total = orderService.findTotalOnOrdersByCustomerId(customerId);
+
+            verify(mongoTemplate, times(1))
+                    .aggregate(any(Aggregation.class), anyString(), eq(Document.class));
+            assertEquals(totalExpected, total);
+
         }
 
         @Test
